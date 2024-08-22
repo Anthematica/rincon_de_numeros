@@ -119,7 +119,7 @@ const App = () => {
       return () => clearTimeout(timer);
     }
   }, [showModal]);
-
+  //Aver
   return (
     <div className="container">
       <h1>Cuenta en inglés</h1>
