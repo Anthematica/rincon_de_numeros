@@ -1,0 +1,37 @@
+/* Existing styles... */
+
+/* Styles for the StartScreen */
+.start-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f8ff; /* Light background color for better contrast */
+}
+
+.logo-container {
+  text-align: center;
+}
+
+.school-logo {
+  width: 150px; /* Adjust as needed */
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.start-button {
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  background-color: #ffc300;
+  color: #196f3d;
+  border: 2px solid #ff5733;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.start-button:hover {
+  background-color: #ff5733;
+  color: #fff;
+  transform: scale(1.05);
+}
