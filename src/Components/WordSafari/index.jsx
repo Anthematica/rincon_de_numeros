@@ -15,10 +15,129 @@ const levels = {
   2: {
     scenario: "Numbers",
     objects: [
-      { name: "One", image: "One.png", options: ["One", "Four", "Five"] },
+      {
+        name: "Cero",
+        image: "Cero.jpeg",
+        options: ["One", "Four", "Five", "Cero"],
+      },
+      {
+        name: "One",
+        image: "One.png",
+        options: ["One", "Four", "Five", "Cero"],
+      },
+      {
+        name: "Two",
+        image: "Two.jpeg",
+        options: ["One", "Four", "Two", "Nine"],
+      },
+      {
+        name: "Three",
+        image: "Three.jpeg",
+        options: ["Seven", "Four", "Five", "Three"],
+      },
+      {
+        name: "Four",
+        image: "Four.jpeg",
+        options: ["Two", "Four", "Five", "Cero"],
+      },
+      {
+        name: "Five",
+        image: "Five.jpeg",
+        options: ["Five", "Four", "Three", "Cero"],
+      },
+      {
+        name: "Six",
+        image: "Six.jpeg",
+        options: ["One", "Four", "Five", "Six"],
+      },
+      {
+        name: "Seven",
+        image: "Seven.jpeg",
+        options: ["Nine", "Four", "Five", "Seven"],
+      },
+      {
+        name: "Eight",
+        image: "Eight.jpeg",
+        options: ["One", "Eight", "Five", "Nine"],
+      },
+      {
+        name: "Nine",
+        image: "Nine.jpeg",
+        options: ["One", "Four", "Nine", "Cero"],
+      },
     ],
   },
   // Add more levels and objects here...
+  3: {
+    scenario: "School supplies",
+    objects: [
+      {
+        name: "Glue",
+        image: "glue.jpeg",
+        options: ["Glue", "Pencil", "Colors", "Eraser"],
+      },
+      {
+        name: "Pencil",
+        image: "Pencil.jpeg",
+        options: ["Glue", "Pencil", "Colors", "Eraser"],
+      },
+      {
+        name: "Colors",
+        image: "Colors.jpeg",
+        options: ["Glue", "Pencil", "Colors", "Eraser"],
+      },
+      {
+        name: "Eraser",
+        image: "Eraser.jpeg",
+        options: ["Glue", "Pencil", "Colors", "Eraser"],
+      },
+    ],
+  },
+  4: {
+    scenario: "Clothes",
+    objects: [
+      {
+        name: "Shirt",
+        image: "Shirt.jpeg",
+        options: ["Shirt", "Scarf", "Short", "Glasses"],
+      },
+      {
+        name: "Glasses",
+        image: "Glasses.jpeg",
+        options: ["Shirt", "Scarf", "Short", "Glasses"],
+      },
+      {
+        name: "Short",
+        image: "Short.jpeg",
+        options: ["Shirt", "Scarf", "Short", "Glasses"],
+      },
+      {
+        name: "Scarf",
+        image: "Scarf.jpeg",
+        options: ["Shirt", "Scarf", "Short", "Glasses"],
+      },
+      {
+        name: "Skirt",
+        image: "Skirt.jpeg",
+        options: ["Shirt", "Scarf", "Skirt", "Glasses"],
+      },
+      {
+        name: "Slippers",
+        image: "Slippers.jpeg",
+        options: ["Shirt", "Scarf", "Short", "Slippers"],
+      },
+      {
+        name: "Socks",
+        image: "Socks.jpeg",
+        options: ["Socks", "Scarf", "Short", "Glasses"],
+      },
+      {
+        name: "Dress",
+        image: "Dress.jpeg",
+        options: ["Shirt", "Dress", "Short", "Glasses"],
+      },
+    ],
+  },
 };
 
 // Fisher-Yates shuffle algorithm
