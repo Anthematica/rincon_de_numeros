@@ -1,205 +1,128 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment";
 import { USDZExporter } from "three/examples/jsm/exporters/USDZExporter";
-import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
-import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
-import { HDRCubeTextureLoader } from "three/examples/jsm/loaders/HDRCubeTextureLoader";
 
-const App = () => {
-  const [text, setText] = useState("It works!");
-  const [usdzUrl, setUsdUrl] = useState(null);
-  const objectsRef = useRef(new THREE.Group());
-  const hdrCubeMapRef = useRef(null);
-  const pmremGeneratorRef = useRef(null);
-  const worldEnvMapRef = useRef(null);
+const IOSAR = () => {
+  const containerRef = useRef();
 
-  const addSticks = () => {
-    const group = objectsRef.current;
-    for (let i = 0; i < 100; i++) {
-      const material = new THREE.MeshStandardMaterial({
-        color: Math.random() * 0xffffff,
-      });
-      const geometry = new THREE.BoxGeometry(0.01, 0.01, 0.1);
-      const stick = new THREE.Mesh(geometry, material);
-      stick.position.set(
-        Math.random() - 0.5,
-        Math.random() - 0.5,
-        Math.random() - 0.5
+  useEffect(() => {
+    let camera, scene, renderer;
+
+    const init = async () => {
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      containerRef.current.appendChild(renderer.domElement);
+
+      camera = new THREE.PerspectiveCamera(
+        45,
+        window.innerWidth / window.innerHeight,
+        0.25,
+        20
       );
-      stick.lookAt(new THREE.Vector3());
-      stick.position.normalize().multiplyScalar(0.4);
-      group.add(stick);
-    }
-  };
+      camera.position.set(-2.5, 0.6, 3.0);
 
-  const drawText = async (scene, fontUrl, text) => {
-    const fontLoader = new FontLoader();
-    const font = await fontLoader.loadAsync(fontUrl);
-    const textGeo = new TextGeometry(text, {
-      font,
-      size: 0.1,
-      height: 0.01,
-      bevelEnabled: true,
-      bevelThickness: 0.002,
-      bevelSize: 0.002,
-      bevelSegments: 1,
-    });
+      const pmremGenerator = new THREE.PMREMGenerator(renderer);
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xf0f0f0);
+      scene.environment = pmremGenerator.fromScene(
+        new RoomEnvironment(),
+        0.04
+      ).texture;
 
-    const material = new THREE.MeshStandardMaterial({
-      color: 0xc0e0ff,
-      metalness: 1,
-      envMap: worldEnvMapRef.current,
-      roughness: 0.1,
-    });
+      const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+      const boxMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+      const box = new THREE.Mesh(boxGeometry, boxMaterial);
+      scene.add(box);
 
-    // Remove previous text if exists
-    objectsRef.current.children = objectsRef.current.children.filter(
-      (child) => !(child.geometry instanceof TextGeometry)
-    );
+      const shadowMesh = createSpotShadowMesh();
+      shadowMesh.position.y = -1.1;
+      shadowMesh.position.z = -0.25;
+      shadowMesh.scale.setScalar(2);
+      scene.add(shadowMesh);
 
-    const textMesh = new THREE.Mesh(textGeo, material);
-    objectsRef.current.add(textMesh);
-    textMesh.position.x -= (0.1 * text.length) / 3;
-  };
+      render();
 
-  const initHDR = (scene, renderer) => {
-    renderer.physicallyCorrectLights = true;
-    renderer.toneMapping = THREE.LinearToneMapping;
-    renderer.outputEncoding = THREE.sRGBEncoding;
-
-    const pmremGenerator = new THREE.PMREMGenerator(renderer);
-    pmremGeneratorRef.current = pmremGenerator;
-
-    const hdrUrls = [
-      "px.hdr",
-      "nx.hdr",
-      "py.hdr",
-      "ny.hdr",
-      "pz.hdr",
-      "nz.hdr",
-    ];
-    const hdrCubeMap = new HDRCubeTextureLoader()
-      .setPath("https://threejs.org/examples/textures/cube/pisaHDR/")
-      .setDataType(THREE.HalfFloatType)
-      .load(hdrUrls, () => {
-        const hdrCubeRenderTarget = pmremGenerator.fromCubemap(hdrCubeMap);
-        hdrCubeMap.magFilter = THREE.LinearFilter;
-        hdrCubeMap.needsUpdate = true;
-
-        scene.background = hdrCubeMap;
-        worldEnvMapRef.current = hdrCubeRenderTarget.texture;
-
-        scene.traverse((el) => {
-          if (!el.material) return;
-          el.material.envMap = hdrCubeRenderTarget.texture;
-          el.material.needsUpdate = true;
-        });
+      // USDZ Exporter
+      const exporter = new USDZExporter();
+      const arraybuffer = await exporter.parseAsync(box);
+      const blob = new Blob([arraybuffer], {
+        type: "application/octet-stream",
       });
 
-    hdrCubeMapRef.current = hdrCubeMap;
-  };
+      const link = document.createElement("a");
+      link.rel = "ar";
+      link.href = URL.createObjectURL(blob);
+      link.download = "asset.usdz";
+      link.style.position = "absolute";
+      link.style.bottom = "15px";
+      link.style.left = "calc(50% - 40px)";
+      link.innerHTML = `<img width="80" src="https://via.placeholder.com/80" alt="Enter AR">`;
+      document.body.appendChild(link);
+    };
 
-  const SceneComponent = () => {
-    const { scene, camera, gl } = useThree();
+    const createSpotShadowMesh = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 128;
+      canvas.height = 128;
 
-    useEffect(() => {
-      const renderer = gl;
-      initHDR(scene, renderer);
-      addSticks();
-      drawText(
-        scene,
-        "https://threejs.org/examples/fonts/optimer_bold.typeface.json",
-        text
+      const context = canvas.getContext("2d");
+      const gradient = context.createRadialGradient(
+        canvas.width / 2,
+        canvas.height / 2,
+        0,
+        canvas.width / 2,
+        canvas.height / 2,
+        canvas.width / 2
       );
-    }, [scene, gl]);
+      gradient.addColorStop(0.1, "rgba(130,130,130,1)");
+      gradient.addColorStop(1, "rgba(255,255,255,1)");
 
-    useEffect(() => {
-      drawText(
-        scene,
-        "https://threejs.org/examples/fonts/optimer_bold.typeface.json",
-        text
-      );
-    }, [text, scene]);
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, canvas.width, canvas.height);
 
-    useFrame(() => {
-      camera.lookAt(new THREE.Vector3());
-      camera.position.set(
-        0.5 * Math.sin(Date.now() / 3000),
-        0.3,
-        0.5 * Math.cos(Date.now() / 2000)
-      );
-    });
+      const shadowTexture = new THREE.CanvasTexture(canvas);
 
-    return <primitive object={objectsRef.current} />;
-  };
+      const geometry = new THREE.PlaneGeometry();
+      const material = new THREE.MeshBasicMaterial({
+        map: shadowTexture,
+        blending: THREE.MultiplyBlending,
+        toneMapped: false,
+      });
 
-  const handleSaveUSDZ = async () => {
-    const exporter = new USDZExporter();
-    const data = await exporter.parse(objectsRef.current);
-    const blob = new Blob([data], { type: "model/vnd.usdz+zip" });
-    const url = URL.createObjectURL(blob);
-    setUsdUrl(url);
-  };
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.rotation.x = -Math.PI / 2;
 
-  return (
-    <>
-      <input
-        type="text"
-        placeholder="Type to update text"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        style={{
-          position: "fixed",
-          top: "10px",
-          right: "30px",
-          width: "50%",
-          padding: "10px",
-          borderRadius: "20px",
-          backgroundColor: "white",
-          border: "1px solid #ccc",
-          boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-        }}
-      />
-      <a
-        href={usdzUrl}
-        rel="ar"
-        style={{
-          position: "fixed",
-          top: "10px",
-          left: "10px",
-          border: "1px solid black",
-          backgroundColor: "white",
-          padding: "9px",
-          borderRadius: "5px",
-          cursor: "pointer",
-          boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-        }}
-        download="model.usdz"
-        onClick={handleSaveUSDZ}>
-        <img
-          src="https://via.placeholder.com/150" // Replace with a relevant preview image
-          alt="View in AR"
-          style={{ width: "100%", height: "auto" }}
-        />
-        View in AR
-      </a>
-      <Canvas
-        style={{
-          position: "fixed",
-          top: "50px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          border: "1px solid #ddd",
-          borderRadius: "10px",
-          backgroundColor: "#f5f5f5",
-          boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-        }}
-        camera={{ position: [0, 0, 1] }}>
-        <SceneComponent />
-      </Canvas>
-    </>
-  );
+      return mesh;
+    };
+
+    const onWindowResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      render();
+    };
+
+    const render = () => {
+      renderer.render(scene, camera);
+    };
+
+    init();
+
+    window.addEventListener("resize", onWindowResize);
+
+    return () => {
+      window.removeEventListener("resize", onWindowResize);
+      if (renderer) {
+        containerRef.current.removeChild(renderer.domElement);
+      }
+    };
+  }, []);
+
+  return <div ref={containerRef} style={{ width: "100vw", height: "100vh" }} />;
 };
 
-export default App;
+export default IOSAR;
