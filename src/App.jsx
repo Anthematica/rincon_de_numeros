@@ -2,27 +2,28 @@ import React, { useState } from "react";
 
 import StartScreen from "./Components/StartCreen";
 import WordSafari from "./Components/WordSafari";
+import IOSAR from "./Components/ARIOS";
 
 function App() {
-  const [start, setStart] = useState(false);
-  const [level, setLevel] = useState(1);
+  // const [start, setStart] = useState(false);
+  // const [level, setLevel] = useState(1);
 
-  const handleStart = () => {
-    setStart(true);
-  };
+  // const handleStart = () => {
+  //   setStart(true);
+  // };
 
-  const handleNextLevel = () => {
-    setLevel(level + 1);
-  };
+  // const handleNextLevel = () => {
+  //   setLevel(level + 1);
+  // };
 
-  const handleRestartGame = () => {
-    setLevel(1);
-    setStart(false); // Go back to the start screen
-  };
+  // const handleRestartGame = () => {
+  //   setLevel(1);
+  //   setStart(false); // Go back to the start screen
+  // };
 
   return (
     <div className="app">
-      {!start ? (
+      {/* {!start ? (
         <StartScreen onStart={handleStart} />
       ) : (
         <WordSafari
@@ -30,7 +31,8 @@ function App() {
           onNextLevel={handleNextLevel}
           onRestartGame={handleRestartGame}
         />
-      )}
+      )} */}
+      <IOSAR />
     </div>
   );
 }
