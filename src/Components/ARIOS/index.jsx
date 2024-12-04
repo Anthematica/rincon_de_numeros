@@ -8,6 +8,7 @@ import { HDRCubeTextureLoader } from "three/examples/jsm/loaders/HDRCubeTextureL
 
 const IOSAR = () => {
   const [text, setText] = useState("It works!");
+  const [usdzUrl, setUsdUrl] = useState(null);
   const objectsRef = useRef(new THREE.Group());
   const hdrCubeMapRef = useRef(null);
   const pmremGeneratorRef = useRef(null);
@@ -136,15 +137,20 @@ const IOSAR = () => {
   const handleSaveUSDZ = async () => {
     const exporter = new USDZExporter();
     const data = await exporter.parse(objectsRef.current);
-    const blob = new Blob([data], { type: "application/octet-stream" });
+    const blob = new Blob([data], { type: "model/vnd.usdz+zip" });
     const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.rel = "ar";
-    a.download = "model.usdz";
-    a.click();
+    setUsdUrl(url);
   };
+
+  useEffect(() => {
+    if (usdzUrl) {
+      const link = document.createElement("a");
+      link.rel = "ar";
+      link.href = usdzUrl;
+      link.download = "model.usdz";
+      link.click();
+    }
+  }, [usdzUrl]);
 
   return (
     <>
