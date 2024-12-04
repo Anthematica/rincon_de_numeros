@@ -6,7 +6,7 @@ import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import { HDRCubeTextureLoader } from "three/examples/jsm/loaders/HDRCubeTextureLoader";
 
-const IOSAR = () => {
+const App = () => {
   const [text, setText] = useState("It works!");
   const [usdzUrl, setUsdUrl] = useState(null);
   const objectsRef = useRef(new THREE.Group());
@@ -202,4 +202,4 @@ const IOSAR = () => {
   );
 };
 
-export default IOSAR;
+export default App;
