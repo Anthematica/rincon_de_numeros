@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { USDZExporter } from "three/examples/jsm/exporters/USDZExporter";
@@ -142,58 +142,62 @@ const IOSAR = () => {
     setUsdUrl(url);
   };
 
-  useEffect(() => {
-    if (usdzUrl) {
-      const link = document.createElement("a");
-      link.rel = "ar";
-      link.href = usdzUrl;
-      link.download = "model.usdz";
-      link.click();
-    }
-  }, [usdzUrl]);
-
   return (
     <>
-      <div className="AR-container">
-        <input
-          type="text"
-          placeholder="Type to update text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          style={{
-            width: "50%",
-            padding: "10px",
-            borderRadius: "20px",
-            backgroundColor: "white",
-            border: "1px solid #ccc",
-            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-          }}
+      <input
+        type="text"
+        placeholder="Type to update text"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        style={{
+          position: "fixed",
+          top: "10px",
+          right: "30px",
+          width: "50%",
+          padding: "10px",
+          borderRadius: "20px",
+          backgroundColor: "white",
+          border: "1px solid #ccc",
+          boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+        }}
+      />
+      <a
+        href={usdzUrl}
+        rel="ar"
+        style={{
+          position: "fixed",
+          top: "10px",
+          left: "10px",
+          border: "1px solid black",
+          backgroundColor: "white",
+          padding: "9px",
+          borderRadius: "5px",
+          cursor: "pointer",
+          boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+        }}
+        download="model.usdz"
+        onClick={handleSaveUSDZ}>
+        <img
+          src="https://via.placeholder.com/150" // Replace with a relevant preview image
+          alt="View in AR"
+          style={{ width: "100%", height: "auto" }}
         />
-
-        <button
-          onClick={handleSaveUSDZ}
-          style={{
-            border: "1px solid black",
-            backgroundColor: "white",
-            padding: "9px",
-            borderRadius: "5px",
-            cursor: "pointer",
-            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-          }}>
-          View in AR
-        </button>
-        <Canvas
-          style={{
-            border: "1px solid #ddd",
-            borderRadius: "10px",
-            height: "600px",
-            backgroundColor: "#f5f5f5",
-            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-          }}
-          camera={{ position: [0, 0, 1] }}>
-          <SceneComponent />
-        </Canvas>
-      </div>
+        View in AR
+      </a>
+      <Canvas
+        style={{
+          position: "fixed",
+          top: "50px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          border: "1px solid #ddd",
+          borderRadius: "10px",
+          backgroundColor: "#f5f5f5",
+          boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+        }}
+        camera={{ position: [0, 0, 1] }}>
+        <SceneComponent />
+      </Canvas>
     </>
   );
 };
