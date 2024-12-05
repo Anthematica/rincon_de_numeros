@@ -42,7 +42,7 @@ const ARWithLgbLoad = ({ gltfPath }) => {
   const [arLink, setArLink] = useState(null);
 
   return (
-    <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
+    <div style={{ height: "100vh" }}>
       <Canvas
         camera={{ position: [-2, 2, 4], fov: 45 }}
         onCreated={({ gl, scene }) => {
