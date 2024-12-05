@@ -37,7 +37,17 @@ const IOSAR = () => {
   const [arLink, setArLink] = useState(null);
 
   return (
-    <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
+    <div style={{ width: "100%", height: "100%" }}>
+      {arLink && (
+        <a
+          rel="ar"
+          href={arLink}
+          download="asset.usdz"
+          style={{ display: "flex" }}>
+          Enter ar
+          {/* <img src="https://via.placeholder.com/80" alt="Enter AR" /> */}
+        </a>
+      )}
       <Canvas
         camera={{ position: [-2.5, 0.6, 3.0], fov: 45 }}
         onCreated={({ gl, scene }) => {
@@ -49,19 +59,6 @@ const IOSAR = () => {
         <ambientLight intensity={0.5} />
         <directionalLight position={[10, 10, 10]} intensity={1} />
       </Canvas>
-      {arLink && (
-        <a
-          rel="ar"
-          href={arLink}
-          download="asset.usdz"
-          style={{
-            position: "absolute",
-            bottom: "15px",
-            left: "calc(50% - 40px)",
-          }}>
-          <img width="80" src="https://via.placeholder.com/80" alt="Enter AR" />
-        </a>
-      )}
     </div>
   );
 };
