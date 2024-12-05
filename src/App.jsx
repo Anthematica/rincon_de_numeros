@@ -3,8 +3,10 @@ import React, { useState } from "react";
 import StartScreen from "./Components/StartCreen";
 import WordSafari from "./Components/WordSafari";
 import IOSAR from "./Components/ARIOS";
+import ARWithLgbLoad from "./Components/ARWithGlbLoad";
 
 function App() {
+  const gltfPathHeadset = " /rincon_de_numeros/assets/headsetTest.glb ";
   // const [start, setStart] = useState(false);
   // const [level, setLevel] = useState(1);
 
@@ -32,7 +34,8 @@ function App() {
           onRestartGame={handleRestartGame}
         />
       )} */}
-      <IOSAR />
+      {/* <IOSAR /> */}
+      <ARWithLgbLoad gltfPath={gltfPathHeadset} />
     </div>
   );
 }
