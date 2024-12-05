@@ -45,7 +45,7 @@ const IOSAR = () => {
           download="asset.usdz"
           style={{ display: "flex" }}>
           Enter ar
-          {/* <img src="https://via.placeholder.com/80" alt="Enter AR" /> */}
+          <img src="https://via.placeholder.com/80" alt="Enter AR" />
         </a>
       )}
       <Canvas
