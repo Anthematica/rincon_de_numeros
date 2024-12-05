@@ -71,6 +71,7 @@ const ARWithLgbLoad = ({ gltfPath }) => {
             textDecoration: "none",
           }}>
           View in AR
+          <img src="https://via.placeholder.com/80" alt="Enter AR" />
         </a>
       )}
     </div>
